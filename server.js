@@ -345,7 +345,7 @@ app.post('/api/direct-call', authenticateToken, async (req, res) => {
 
     try {
         await twilioClient.calls.create({
-            url: `${process.env.APP_URL || 'https://js-ue5o.onrender.com'}/twiml/ask`,
+            url: `${process.env.APP_URL || 'https://js-egzv.onrender.com'}/twiml/ask`,
             to: phone,
             from: TWILIO_PHONE_NUMBER
         });

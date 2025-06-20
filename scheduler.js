@@ -5,7 +5,7 @@ require('dotenv').config();
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
 const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
-const APP_URL = process.env.APP_URL || 'https://js-ue5o.onrender.com';
+const APP_URL = process.env.APP_URL || 'https://js-egzv.onrender.com';
 const twilioClient = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 
 async function processScheduledCalls() {
