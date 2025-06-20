@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 const { twiml: { VoiceResponse } } = require('twilio');
 const { initializeDb, query } = require('./db');
-const { zonedTimeToUtc, format } = require('date-fns-tz');
+const { zonedTimeToUtc } = require('date-fns-tz');
 require('dotenv').config();
 
 const app = express();
