@@ -17,6 +17,9 @@
             </div>
             <div class="nav-user">
                 <span id="userName">User</span>
+                <button id="directCallBtn" class="direct-call-btn" title="Make a direct call">
+                    <i class="fas fa-phone"></i> Direct Call
+                </button>
                 <span id="userCredits" class="credits-badge"></span>
                 <span class="contact-admin-info" style="margin-left: 1.5rem; font-size: 0.95rem; color: #5a67d8;">
                     <i class="fas fa-headset"></i> admin@example.com | +1 234 567 890
@@ -62,6 +65,19 @@
                 <span id="infoBoxMessage">Welcome! Use the options above to manage your account.</span>
             </div>
         </main>
+    </div>
+
+    <!-- Direct Call Modal -->
+    <div id="directCallModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn" id="closeDirectCallModal">&times;</span>
+            <h2>Direct Call</h2>
+            <p>Enter your phone number to receive an immediate call.</p>
+            <form id="directCallForm">
+                <input type="tel" id="directCallPhone" placeholder="Enter phone number (e.g. +1...)" required>
+                <button type="submit" class="modal-btn">Call Now</button>
+            </form>
+        </div>
     </div>
 
     <script src="user-dashboard.js"></script>

@@ -617,6 +617,31 @@ app.post('/twiml/ask', express.urlencoded({ extended: false }), (req, res) => {
     res.send(response.toString());
 });
 
+// New endpoint for direct calls
+app.post('/api/direct-call', authenticateToken, async (req, res) => {
+    const { phone } = req.body;
+    if (!phone) {
+        return res.status(400).json({ success: false, message: 'Phone number is required.' });
+    }
+
+    try {
+        await twilioClient.calls.create({
+            url: `${process.env.APP_URL || 'https://js-ue5o.onrender.com'}/twiml/ask`,
+            to: phone,
+            from: TWILIO_PHONE_NUMBER
+        });
+        console.log(`Direct call initiated to ${phone}`);
+        res.json({ success: true, message: 'Direct call initiated successfully.' });
+    } catch (err) {
+        console.error('Error making direct call with Twilio:', err);
+        // Check for specific Twilio error for invalid phone number
+        if (err.code === 21211) {
+            return res.status(400).json({ success: false, message: 'The provided phone number is not valid. Please use E.164 format (e.g., +14155552671).' });
+        }
+        res.status(500).json({ success: false, message: 'Failed to initiate direct call.' });
+    }
+});
+
 // Start server
 app.listen(PORT, () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);

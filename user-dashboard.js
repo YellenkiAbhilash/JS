@@ -380,4 +380,58 @@ document.addEventListener('DOMContentLoaded', function() {
             showNotification('admin@example.com | +1 234 567 890', 'info');
         });
     }
+
+    // Direct Call Modal Logic
+    const directCallBtn = document.getElementById('directCallBtn');
+    const directCallModal = document.getElementById('directCallModal');
+    const closeDirectCallModal = document.getElementById('closeDirectCallModal');
+    const directCallForm = document.getElementById('directCallForm');
+
+    if (directCallBtn && directCallModal && closeDirectCallModal && directCallForm) {
+        directCallBtn.addEventListener('click', () => {
+            directCallModal.style.display = 'flex';
+        });
+
+        closeDirectCallModal.addEventListener('click', () => {
+            directCallModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === directCallModal) {
+                directCallModal.style.display = 'none';
+            }
+        });
+
+        directCallForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const phone = document.getElementById('directCallPhone').value.trim();
+            if (!phone) {
+                showNotification('Please enter a valid phone number', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/direct-call', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ phone })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    showNotification('Call initiated! You will receive a call shortly.', 'success');
+                    directCallModal.style.display = 'none';
+                    directCallForm.reset();
+                } else {
+                    showNotification(data.message || 'Failed to initiate call.', 'error');
+                }
+            } catch (err) {
+                showNotification('Network error. Please try again.', 'error');
+            }
+        });
+    }
 }); 
