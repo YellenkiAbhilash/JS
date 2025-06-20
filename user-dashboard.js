@@ -273,7 +273,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (data.calls.length === 0) {
                         infoBox.innerHTML = `<div class='info-box-title'><i class='fas fa-calendar-check'></i> Scheduled Calls</div><div class='info-box-content'>You have no scheduled calls.</div>`;
                     } else {
-                        const callsList = data.calls.map(call => `<li><strong>${call.name}</strong> (${call.phone})<br>${new Date(call.time).toLocaleString()}</li>`).join('');
+                        const callsList = data.calls.map(call => {
+                            const formattedDate = new Intl.DateTimeFormat('en-IN', {
+                                dateStyle: 'medium',
+                                timeStyle: 'short',
+                                timeZone: 'Asia/Kolkata'
+                            }).format(new Date(call.time));
+                            return `<li><strong>${call.name}</strong> (${call.phone})<br>${formattedDate} (IST)</li>`;
+                        }).join('');
                         infoBox.innerHTML = `<div class='info-box-title'><i class='fas fa-calendar-check'></i> Scheduled Calls</div><div class='info-box-content'><ul>${callsList}</ul></div>`;
                     }
                 } else {
