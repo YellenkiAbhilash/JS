@@ -107,9 +107,9 @@ app.get('/api/profile', authenticateToken, async (req, res) => {
     try {
         const result = await query('SELECT id, email, name, role, credits FROM users WHERE id = $1', [req.user.userId]);
         const user = result.rows[0];
-        if (!user) {
-            return res.status(404).json({ success: false, message: 'User not found' });
-        }
+    if (!user) {
+        return res.status(404).json({ success: false, message: 'User not found' });
+    }
         res.json({ success: true, user });
     } catch (error) {
         console.error('Profile fetch error:', error);
@@ -152,7 +152,7 @@ app.delete('/api/users/:id', authenticateToken, async (req, res) => {
     const { id } = req.params;
     try {
         await query('DELETE FROM users WHERE id = $1', [id]);
-        res.json({ success: true, message: 'User deleted successfully' });
+            res.json({ success: true, message: 'User deleted successfully' });
     } catch (error) {
         console.error('Delete user error:', error);
         res.status(500).json({ success: false, message: 'Internal server error' });
@@ -205,7 +205,7 @@ app.post('/api/forgot-password', async (req, res) => {
 app.post('/api/reset-password', async (req, res) => {
     const { token, newPassword } = req.body;
     if (!token || !newPassword) return res.status(400).json({ success: false, message: 'Token and new password required' });
-
+    
     const entry = resetTokens[token];
     if (!entry || entry.expires < Date.now()) {
         return res.status(400).json({ success: false, message: 'Invalid or expired token' });
@@ -221,6 +221,15 @@ app.post('/api/reset-password', async (req, res) => {
 app.post('/api/schedule-call', authenticateToken, async (req, res) => {
     const { name, phone, time } = req.body;
     if (!name || !phone || !time) return res.status(400).json({ success: false, message: 'All fields are required.' });
+
+    // Basic E.164 format validation
+    const phoneRegex = /^\+[1-9]\d{1,14}$/;
+    if (!phoneRegex.test(phone)) {
+        return res.status(400).json({ 
+            success: false, 
+            message: 'Invalid phone number format. Please use the E.164 format (e.g., +14155552671).' 
+        });
+    }
 
     try {
         const result = await query(
@@ -348,8 +357,8 @@ app.post('/api/direct-call', authenticateToken, async (req, res) => {
 const startServer = async () => {
   try {
     await initializeDb();
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
+app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);
