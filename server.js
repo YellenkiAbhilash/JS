@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer');
 const twilio = require('twilio');
 const { twiml: { VoiceResponse } } = require('twilio');
 const { initializeDb, query } = require('./db');
-const { zonedTimeToUtc } = require('date-fns-tz');
+const dateFnsTz = require('date-fns-tz');
 require('dotenv').config();
 
 const app = express();
@@ -236,7 +236,7 @@ app.post('/api/schedule-call', authenticateToken, async (req, res) => {
         // The user provides time in their local timezone (assume IST for this app)
         // The input type="datetime-local" gives a string like "2024-07-26T14:00"
         const userTimeZone = 'Asia/Kolkata';
-        const utcDate = zonedTimeToUtc(time, userTimeZone);
+        const utcDate = dateFnsTz.zonedTimeToUtc(time, userTimeZone);
 
         const result = await query(
             'INSERT INTO calls (user_id, name, phone, "time") VALUES ($1, $2, $3, $4) RETURNING *',
