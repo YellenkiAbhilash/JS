@@ -567,10 +567,17 @@ app.post('/api/questions', authenticateToken, (req, res) => {
 
 // TwiML webhook to ask questions and collect responses
 app.post('/twiml/ask', express.urlencoded({ extended: false }), (req, res) => {
+    console.log('--- New /twiml/ask request ---');
+    console.log('Request Body:', req.body);
+    console.log('Query Params:', req.query);
+
     const callSid = req.body.CallSid;
     const digits = req.body.SpeechResult || req.body.Digits;
     const questionIndex = parseInt(req.query.questionIndex || req.body.questionIndex || '0', 10);
+    
     const questions = loadQuestions();
+    console.log(`Loaded ${questions.length} questions:`, questions);
+
     let responses = loadResponses();
     let callResponse = responses.find(r => r.callSid === callSid);
     if (!callResponse) {
@@ -581,18 +588,28 @@ app.post('/twiml/ask', express.urlencoded({ extended: false }), (req, res) => {
     if (callSid && digits !== undefined && questionIndex > 0) {
         callResponse.answers[questionIndex - 1] = digits;
         saveResponses(responses);
+        console.log(`Saved response for question ${questionIndex - 1}: ${digits}`);
     }
+
     const response = new VoiceResponse();
+
     if (questionIndex < questions.length) {
+        console.log(`Asking question ${questionIndex}: "${questions[questionIndex]}"`);
         const gather = response.gather({
             input: 'speech dtmf',
             numDigits: 1,
             action: `/twiml/ask?questionIndex=${questionIndex + 1}`,
-            method: 'POST'
+            method: 'POST',
+            timeout: 10 // Add a timeout for user input
         });
         gather.say(questions[questionIndex]);
+        
+        // If gather times out, Twilio will re-request the current TwiML, so we add a fallback.
+        response.say("We didn't receive any input. Let's try that again.");
         response.redirect({ method: 'POST' }, `/twiml/ask?questionIndex=${questionIndex}`);
+
     } else {
+        console.log('All questions asked. Ending call.');
         response.say('Thank you for your responses. Goodbye!');
         response.hangup();
     }
