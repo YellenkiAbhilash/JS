@@ -520,32 +520,6 @@ app.get('/api/scheduled-calls', authenticateToken, (req, res) => {
     res.json({ success: true, calls: userCalls });
 });
 
-// Add background scheduler before app.listen
-setInterval(async () => {
-    const callsData = loadCalls();
-    const now = new Date();
-    let updated = false;
-
-    for (const call of callsData.calls) {
-        if (!call.completed && new Date(call.time) <= now) {
-            try {
-                await twilioClient.calls.create({
-                    url: 'https://js-ue5o.onrender.com/twiml/ask',
-                    to: call.phone,
-                    from: TWILIO_PHONE_NUMBER
-                });
-                call.completed = true;
-                call.completed_at = new Date().toISOString();
-                console.log(`Call made to ${call.name} (${call.phone})`);
-                updated = true;
-            } catch (err) {
-                console.error('Error making call with Twilio:', err);
-            }
-        }
-    }
-    if (updated) saveCalls(callsData);
-}, 60 * 1000); // Check every minute
-
 // GET /api/questions
 app.get('/api/questions', authenticateToken, (req, res) => {
     const questions = loadQuestions();
