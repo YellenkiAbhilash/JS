@@ -12,6 +12,7 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-production';
+const DATA_DIR = process.env.DATA_DIR || __dirname; // Use shared data directory if available
 
 // Middleware
 app.use(cors());
@@ -41,7 +42,7 @@ function saveUsers(usersData) {
 }
 
 // Load calls data
-const callsFile = path.join(__dirname, 'calls.json');
+const callsFile = path.join(DATA_DIR, 'calls.json');
 
 function loadCalls() {
     try {
@@ -87,7 +88,7 @@ const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
 const twilioClient = twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN);
 
 // Add questions file and functions
-const questionsFile = path.join(__dirname, 'questions.json');
+const questionsFile = path.join(DATA_DIR, 'questions.json');
 function loadQuestions() {
     try {
         if (!fs.existsSync(questionsFile)) {
@@ -111,7 +112,7 @@ function saveQuestions(questions) {
 }
 
 // At the top, after other requires
-const responsesFile = path.join(__dirname, 'responses.json');
+const responsesFile = path.join(DATA_DIR, 'responses.json');
 function loadResponses() {
     try {
         if (!fs.existsSync(responsesFile)) {

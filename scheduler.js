@@ -3,7 +3,8 @@ const fs = require('fs');
 const twilio = require('twilio');
 require('dotenv').config();
 
-const callsFile = path.join(__dirname, 'calls.json');
+const DATA_DIR = process.env.DATA_DIR || __dirname; // Use shared data directory if available
+const callsFile = path.join(DATA_DIR, 'calls.json');
 const TWILIO_ACCOUNT_SID = process.env.TWILIO_ACCOUNT_SID;
 const TWILIO_AUTH_TOKEN = process.env.TWILIO_AUTH_TOKEN;
 const TWILIO_PHONE_NUMBER = process.env.TWILIO_PHONE_NUMBER;
